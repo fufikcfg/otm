@@ -2,6 +2,15 @@
 # Covers PHP CS Fixer
 # Reference: https://cs.symfony.com/
 
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+###< symfony/framework-bundle ###
+
 # Generated files
 .php-cs-fixer.cache
 
