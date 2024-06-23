@@ -9,6 +9,7 @@
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/
+.env
 ###< symfony/framework-bundle ###
 
 # Generated files
