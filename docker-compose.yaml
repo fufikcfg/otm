@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  database:
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    ports:
+      - ${DATABASE_PORT:-5432}:5432
+    environment:
+      - PGPASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USER}
+    volumes:
+      - otm-pgsql:/var/lib/postgresql/data
+volumes:
+  otm-pgsql:
+    driver: local
