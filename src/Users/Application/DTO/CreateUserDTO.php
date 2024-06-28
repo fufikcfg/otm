@@ -2,7 +2,7 @@
 
 namespace App\Users\Application\DTO;
 
-readonly class UserDTO
+readonly class CreateUserDTO
 {
     public function __construct(
         private int $id,
@@ -11,6 +11,7 @@ readonly class UserDTO
         private string $familyName,
         private string $username,
         private string $email,
+        private string $password,
         private \DateTime $createdAt,
         private \DateTime $updatedAt
     ) {
@@ -49,6 +50,11 @@ readonly class UserDTO
     public function getUpdatedAt(): \DateTime
     {
         return $this->updatedAt;
+    }
+
+    public function getPassword(): string
+    {
+        return $this->password;
     }
 
     public function getGivenName(): string

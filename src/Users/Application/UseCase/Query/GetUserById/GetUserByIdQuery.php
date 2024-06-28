@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Users\Application\UseCase\Query;
+namespace App\Users\Application\UseCase\Query\GetUserById;
 
 use App\Shared\Application\Query\Query;
 

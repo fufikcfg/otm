@@ -2,17 +2,22 @@
 
 namespace App\Users\Domain\Entity;
 
-class User
+use App\Users\Domain\Service\UserPasswordHashedInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+
+class User implements PasswordAuthenticatedUserInterface
 {
+    readonly string $id;
+
     public function __construct(
-        private int $id,
-        private string $middleName,
-        private string $familyName,
-        private string $username,
-        private string $email,
-        private string $password,
-        private \DateTime $createdAt,
-        private \DateTime $updatedAt
+        private string             $middleName,
+        private string             $givenName,
+        private string             $familyName,
+        private string             $username,
+        private string             $email,
+        private string             $password,
+        private readonly \DateTime $createdAt,
+        private \DateTime          $updatedAt
     ) {
     }
 
@@ -61,19 +66,15 @@ class User
         return $this->password;
     }
 
-    public function setPassword(string $password): void
+    public function setPassword(string $password, UserPasswordHashedInterface $userPasswordHashed): self
     {
-        $this->password = $password;
+        $this->password = $userPasswordHashed->hash($this, $password);
+        return $this;
     }
 
     public function getCreatedAt(): \DateTime
     {
         return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTime $createdAt): void
-    {
-        $this->createdAt = $createdAt;
     }
 
     public function getUpdatedAt(): \DateTime
@@ -91,8 +92,13 @@ class User
         return $this->id;
     }
 
-    public function setId(int $id): void
+    public function getGivenName(): string
     {
-        $this->id = $id;
+        return $this->givenName;
+    }
+
+    public function setGivenName(string $givenName): void
+    {
+        $this->givenName = $givenName;
     }
 }

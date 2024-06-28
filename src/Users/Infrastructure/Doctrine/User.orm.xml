@@ -11,6 +11,8 @@
 
         <field name="middleName" type="string" length="255"/>
 
+        <field name="givenName" type="string" length="255"/>
+
         <field name="familyName" type="string" length="255"/>
 
         <field name="username" type="string" length="255" unique="true"/>

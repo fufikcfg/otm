@@ -2,9 +2,10 @@
 
 namespace App\Users\Infrastructure\Controller;
 
-use App\Users\Application\UseCase\Query\GetUserByIdHandler;
-use App\Users\Application\UseCase\Query\GetUserByIdQuery;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Users\Application\UseCase\Query\GetUserById\GetUserByIdHandler;
+use App\Users\Application\UseCase\Query\GetUserById\GetUserByIdQuery;
+use App\Users\Infrastructure\Responder\UserResponder;
+use Exception;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -13,29 +14,26 @@ use Symfony\Component\Routing\Attribute\Route;
 class GetUserAction
 {
     public function __construct(
-        private GetUserByIdHandler $getUserByIdHandler
+        readonly private GetUserByIdHandler $getUserByIdHandler
     ) {
     }
 
-    public function __invoke(int $id): JsonResponse
+    /**
+     * @throws Exception
+     */
+    public function __invoke(int $id): UserResponder
     {
-        try {
-            $query = new GetUserByIdQuery($id);
-            $userDTO = $this->getUserByIdHandler->handle($query);
+        $query = new GetUserByIdQuery($id);
+        $userDTO = $this->getUserByIdHandler->handle($query);
 
-            return new JsonResponse([
-                $userDTO->getId(),
-                $userDTO->getMiddleName(),
-                $userDTO->getFamilyName(),
-                $userDTO->getUsername(),
-                $userDTO->getEmail(),
-                $userDTO->getCreatedAt(),
-                $userDTO->getUpdatedAt(),
-            ]);
-        } catch (\Exception $e) {
-            return new JsonResponse([
-                'error' => $e->getMessage()
-            ], 404);
-        }
+        return new UserResponder($userDTO->getId(), [
+            'middleName' => $userDTO->getMiddleName(),
+            'familyName' => $userDTO->getFamilyName(),
+            'givenName' => $userDTO->getGivenName(),
+            'username' => $userDTO->getUsername(),
+            'email' => $userDTO->getEmail(),
+            'createdAt' => $userDTO->getCreatedAt(),
+            'updatedAt' => $userDTO->getUpdatedAt(),
+        ]);
     }
 }
