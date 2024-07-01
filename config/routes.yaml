@@ -1,6 +1,12 @@
-controllers:
+controllers_users:
     resource:
         path: ../src/Users/Infrastructure/Controller
         namespace: App\Users\Infrastructure\Controller
-
     type: attribute
+
+controllers_roles:
+    resource:
+        path: ../src/Roles/Infrastructure/Controller
+        namespace: App\Roles\Infrastructure\Controller
+    type: attribute
+

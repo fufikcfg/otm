@@ -21,7 +21,7 @@ abstract class ResponderAbstract extends JsonResponse implements ResponderInterf
                 'type' => $this->type(),
                 'id' => $this->getId(),
                 'attributes' => [
-                    $this->attributes,
+                    $this->attributes ?? null,
                 ]
             ]
         ]);

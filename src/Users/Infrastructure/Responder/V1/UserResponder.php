@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Users\Infrastructure\Responder;
+namespace App\Users\Infrastructure\Responder\V1;
 
 use App\Shared\Infrastructure\Responder\ResponderAbstract;
 

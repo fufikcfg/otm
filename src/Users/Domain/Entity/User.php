@@ -7,7 +7,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 class User implements PasswordAuthenticatedUserInterface
 {
-    readonly string $id;
+    readonly int $id;
 
     public function __construct(
         private string             $middleName,

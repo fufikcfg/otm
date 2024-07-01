@@ -35,8 +35,10 @@ final class Version20240623110433 extends AbstractMigration
 
         $this->addSql('CREATE TABLE roles (
         id SERIAL PRIMARY KEY, 
-        name VARCHAR(255) NOT NULL, 
-        UNIQUE(name)
+        key VARCHAR(20) NOT NULL, 
+        name VARCHAR(20) NOT NULL, 
+        UNIQUE(name),
+        UNIQUE(key)
         )');
 
         $this->addSql('CREATE TABLE user_roles (
