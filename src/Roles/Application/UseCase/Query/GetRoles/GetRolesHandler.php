@@ -18,7 +18,7 @@ readonly class GetRolesHandler implements QueryInterface
 
     public function handle(): array
     {
-        return $this->transformer->transformArrayToDTO(
+        return $this->transformer->toArray(
             $this->roleFetcher->checkingCompatibility(
                 $this->userRepository->all()
             )

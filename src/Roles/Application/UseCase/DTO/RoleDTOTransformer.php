@@ -18,4 +18,15 @@ class RoleDTOTransformer
 
         return $rolesDTO;
     }
+
+    public function toArray(array $data)
+    {
+        $rolesDTO = [];
+
+        foreach ($data as $role) {
+            $rolesDTO[] = ['id' => $role->id, 'name' => $role->name, 'key' => $role->key];
+        }
+
+        return $rolesDTO;
+    }
 }

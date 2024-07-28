@@ -2,42 +2,41 @@
 
 namespace App\Shared\Infrastructure\Responder;
 
+use App\Shared\Infrastructure\Schema\SchemaAbstract;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 abstract class ResponderAbstract extends JsonResponse implements ResponderInterface
 {
     public function __construct(
-        readonly private int   $id,
         readonly private array $attributes,
+        readonly private string $schemaClass
     ) {
         parent::__construct();
         $this->setData(
-            [
-            'jsonapi' =>
-                [
-                    'version' => $this->version(),
-                ],
-            'data' => [
-                'type' => $this->type(),
-                'id' => $this->getId(),
-                'attributes' => [
-                    $this->attributes ?? null,
-                ]
-            ]
-        ]);
+            $this->formatData(
+                $this->createSchemaInstance(
+                    new $this->schemaClass($this->attributes)
+                )
+            )
+        );
     }
 
-    abstract function version(): string;
-
-    abstract function type(): string;
-
-    public function getAttributes(): array
+    private function createSchemaInstance(SchemaAbstract $schemaInstance): array
     {
-        return $this->attributes;
+        return [
+            'id' => $schemaInstance->getId(),
+            'type' => $schemaInstance->type(),
+            'attributes' => $schemaInstance->getAttributes()
+        ];
     }
 
-    public function getId(): int
+    private function formatData(array $data): array
     {
-        return $this->id;
+        return [
+            'jsonapi' => [
+                'version' => $this->version(),
+            ],
+            'data' => $data
+        ];
     }
 }
