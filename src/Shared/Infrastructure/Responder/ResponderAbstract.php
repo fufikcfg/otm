@@ -24,9 +24,7 @@ abstract class ResponderAbstract extends JsonResponse implements ResponderInterf
     private function createSchemaInstance(SchemaAbstract $schemaInstance): array
     {
         return [
-            'id' => $schemaInstance->getId(),
-            'type' => $schemaInstance->type(),
-            'attributes' => $schemaInstance->getAttributes()
+            $schemaInstance->getAttributes()
         ];
     }
 

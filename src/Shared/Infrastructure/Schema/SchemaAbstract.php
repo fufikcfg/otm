@@ -28,30 +28,66 @@ abstract class SchemaAbstract implements SchemaContract
             {
                 if(isset($data[$field->getKey()]))
                 {
+                    $attributes[$key]['id'] = $this->getId($data);
                     $attributes[$key][$field->getName()] = $data[$field->getKey()];
                 }
             }
         }
+        return $this->makeAttributeStructure($attributes);
+    }
+
+    private function getId(array $data, int|string $key = null): string
+    {
+        if (isset($key))
+        {
+            return (string) $data[$key]['id'];
+        }
+        return (string) $data['id'] ??
+            throw new \InvalidArgumentException("{$key} not found in data");
+    }
+
+    private function makeAttributeStructure(array $data): array
+    {
+        $attributes = [];
+
+        foreach ($data as $value)
+        {
+            $attributes[] = $this->getBaseStructure($value);
+        }
+
         return $attributes;
     }
 
-    public function getId(): string
+    private function getBaseStructure(array $data): array
     {
-        return isset($this->data['id']) ? (string)$this->data['id'] : 'undefined';
+        $structure = [
+            'type' => $this->type(),
+            'id' => $data['id'],
+            'attributes' => [],
+        ];
+
+        $attributes = $data;
+        unset($attributes['id']);
+
+        $structure['attributes'] = $attributes;
+
+        return $structure;
+    }
+
+
+
+    private function setFields(array $fields): void
+    {
+        $this->fields = $fields;
+    }
+
+    private function getData(): array
+    {
+        return $this->data;
     }
 
     public function getFields(): array
     {
         return $this->fields;
-    }
-
-    public function setFields(array $fields): void
-    {
-        $this->fields = $fields;
-    }
-
-    public function getData(): array
-    {
-        return $this->data;
     }
 }

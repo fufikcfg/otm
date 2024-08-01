@@ -4,6 +4,8 @@ namespace App\Shared\Infrastructure\Field;
 
 abstract class AttributeAbstract implements AttributeInterface
 {
+    abstract public static function make(mixed $key, ?string $name = null): self;
+
     private readonly mixed $key;
     private readonly ?string $name;
 
@@ -13,8 +15,6 @@ abstract class AttributeAbstract implements AttributeInterface
         $this->name = $name ?? $this->key;
     }
 
-    abstract public static function make(mixed $key, ?string $name = null): self;
-
     public function getKey(): string
     {
         return $this->key;
@@ -23,10 +23,5 @@ abstract class AttributeAbstract implements AttributeInterface
     public function getName(): ?string
     {
         return $this->name;
-    }
-
-    public function getValue(): string
-    {
-        return $this->key;
     }
 }
