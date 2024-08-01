@@ -63,7 +63,6 @@ abstract class SchemaAbstract implements SchemaContract
         $structure = [
             'type' => $this->type(),
             'id' => $data['id'],
-            'attributes' => [],
         ];
 
         $attributes = $data;
