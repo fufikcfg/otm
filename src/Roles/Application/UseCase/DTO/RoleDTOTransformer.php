@@ -19,7 +19,7 @@ class RoleDTOTransformer
         return $rolesDTO;
     }
 
-    public function toArray(array $data)
+    public function toArray(array $data): array
     {
         $rolesDTO = [];
 

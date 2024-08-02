@@ -2,7 +2,7 @@
 
 namespace App\Shared\Infrastructure\Schema;
 
-interface SchemaContract
+interface SchemaInterface
 {
     public function fields(array $data): array;
 }

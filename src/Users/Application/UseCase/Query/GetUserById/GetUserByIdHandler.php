@@ -4,32 +4,34 @@ namespace App\Users\Application\UseCase\Query\GetUserById;
 
 use App\Shared\Application\Query\QueryInterface;
 use App\Users\Application\DTO\UserDTO;
+use App\Users\Application\DTO\UserDTOTransformer;
 use App\Users\Infrastructure\Repository\UserRepository;
 
 readonly class GetUserByIdHandler implements QueryInterface
 {
     public function __construct(
-        private UserRepository $userRepository
+        private UserRepository $userRepository,
+
     ) {
     }
 
-    public function handle(GetUserByIdQuery $query): UserDTO|\Exception
+    /**
+     * @throws \Exception
+     */
+    public function handle(GetUserByIdQuery $query): array
     {
-        $user = $this->userRepository->findById($query->getUserId());
+        $user = $this->userRepository->findById($query->getUserId())
+            ?? throw new \Exception('User not found');
 
-        if (!$user) {
-            throw new \Exception('User not found');
-        }
-
-        return new UserDTO(
-            id: $user->getId(),
-            middleName: $user->getMiddleName(),
-            givenName: $user->getGivenName(),
-            familyName: $user->getFamilyName(),
-            username: $user->getUsername(),
-            email: $user->getEmail(),
-            createdAt: $user->getCreatedAt(),
-            updatedAt: $user->getUpdatedAt(),
-        );
+        return (new UserDTO(
+            $user->getId(),
+            $user->getMiddleName(),
+            $user->getGivenName(),
+            $user->getFamilyName(),
+            $user->getUsername(),
+            $user->getEmail(),
+            $user->getCreatedAt(),
+            $user->getUpdatedAt(),
+        ))->toArray();
     }
 }

@@ -3,8 +3,8 @@
 namespace App\Roles\Infrastructure\Controller;
 
 use App\Roles\Application\UseCase\Query\GetRoles\GetRolesHandler;
+use App\Roles\Infrastructure\Responder\V1\RoleResponder;
 use App\Roles\Infrastructure\Schema\RoleSchema;
-use App\Users\Infrastructure\Responder\V1\UserResponder;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -19,6 +19,6 @@ class GetRolesAction
 
     public function __invoke()
     {
-        return new UserResponder($this->getRolesHandler->handle(), RoleSchema::class);
+        return new RoleResponder($this->getRolesHandler->handle(), RoleSchema::class);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Shared\Infrastructure\Schema;
 
-abstract class SchemaAbstract implements SchemaContract
+abstract class SchemaAbstract implements SchemaInterface
 {
     private array $fields;
 
@@ -22,18 +22,40 @@ abstract class SchemaAbstract implements SchemaContract
     public function getAttributes(): array
     {
         $attributes = [];
+        $diffData = $this->diffData();
 
-        foreach ($this->getData() as $key => $data) {
+        foreach ($diffData as $key => $data) {
             foreach ($this->getFields() as $field)
             {
-                if(isset($data[$field->getKey()]))
-                {
-                    $attributes[$key]['id'] = $this->getId($data);
-                    $attributes[$key][$field->getName()] = $data[$field->getKey()];
-                }
+                $attributes[$key]['id'] = $this->getId($data);
+                $attributes[$key][$field->getName()] = $data[$field->getKey()];
             }
         }
         return $this->makeAttributeStructure($attributes);
+    }
+
+    public function getFields(): array
+    {
+        return $this->fields;
+    }
+
+    private function diffData(): array
+    {
+        $data[] = $this->getData();
+        $keys = ['id'];
+
+        foreach ($this->getFields() as $field)
+        {
+            $keys[] = $field->getKey();
+        }
+        // TODO Проблема из за вложенности массивов
+        $diffKeys = array_filter($data, function($key) use ($keys) {
+            return !in_array($key, $keys);
+        }, ARRAY_FILTER_USE_KEY);
+
+        return array_diff_key(
+            $data, $diffKeys
+        );
     }
 
     private function getId(array $data, int|string $key = null): string
@@ -73,8 +95,6 @@ abstract class SchemaAbstract implements SchemaContract
         return $structure;
     }
 
-
-
     private function setFields(array $fields): void
     {
         $this->fields = $fields;
@@ -83,10 +103,5 @@ abstract class SchemaAbstract implements SchemaContract
     private function getData(): array
     {
         return $this->data;
-    }
-
-    public function getFields(): array
-    {
-        return $this->fields;
     }
 }

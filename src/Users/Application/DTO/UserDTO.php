@@ -2,7 +2,9 @@
 
 namespace App\Users\Application\DTO;
 
-readonly class UserDTO
+use App\Shared\Application\DTO\ArrayableInterface;
+
+readonly class UserDTO implements ArrayableInterface
 {
     public function __construct(
         private int $id,
@@ -54,5 +56,19 @@ readonly class UserDTO
     public function getGivenName(): string
     {
         return $this->givenName;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'middleName' => $this->getMiddleName(),
+            'givenName' => $this->getGivenName(),
+            'familyName' => $this->getFamilyName(),
+            'username' => $this->getUsername(),
+            'email' => $this->getEmail(),
+            'createdAt' => $this->getCreatedAt(),
+            'updatedAt' => $this->getUpdatedAt(),
+        ];
     }
 }
