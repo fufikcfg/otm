@@ -4,7 +4,6 @@ namespace App\Shared\Infrastructure\Schema;
 
 abstract class SchemaAbstract implements SchemaInterface
 {
-    // TODO Need refactoring
     private array $fields;
 
     public function __construct(
@@ -42,7 +41,15 @@ abstract class SchemaAbstract implements SchemaInterface
 
     private function diffData(): array
     {
-        $data = $this->getData();
+        return $this->deletingUnnecessaryKeys(
+            $this->filteringKeys(
+                $this->getKeys()
+            )
+        );
+    }
+
+    private function getKeys(): array
+    {
         $keys = ['id'];
 
         foreach ($this->getFields() as $field)
@@ -50,11 +57,27 @@ abstract class SchemaAbstract implements SchemaInterface
             $keys[] = $field->getKey();
         }
 
+        return $keys;
+    }
+
+    private function filteringKeys(array $keys): array
+    {
+        $diffKeys = [];
+
+        $data = $this->getData();
+
         foreach ($data as $datum) {
             $diffKeys[] = array_filter($datum, function($key) use ($keys) {
                 return !in_array($key, $keys);
             }, ARRAY_FILTER_USE_KEY);
         }
+
+        return $diffKeys;
+    }
+
+    private function deletingUnnecessaryKeys(array $diffKeys): array
+    {
+        $data = $this->getData();
 
         foreach ($diffKeys as $key)
         {
@@ -66,7 +89,6 @@ abstract class SchemaAbstract implements SchemaInterface
                 }
             }
         }
-
         return $data;
     }
 
