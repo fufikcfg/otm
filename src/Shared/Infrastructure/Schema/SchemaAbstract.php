@@ -4,6 +4,7 @@ namespace App\Shared\Infrastructure\Schema;
 
 abstract class SchemaAbstract implements SchemaInterface
 {
+    // TODO Need refactoring
     private array $fields;
 
     public function __construct(
@@ -41,21 +42,32 @@ abstract class SchemaAbstract implements SchemaInterface
 
     private function diffData(): array
     {
-        $data[] = $this->getData();
+        $data = $this->getData();
         $keys = ['id'];
 
         foreach ($this->getFields() as $field)
         {
             $keys[] = $field->getKey();
         }
-        // TODO Проблема из за вложенности массивов
-        $diffKeys = array_filter($data, function($key) use ($keys) {
-            return !in_array($key, $keys);
-        }, ARRAY_FILTER_USE_KEY);
 
-        return array_diff_key(
-            $data, $diffKeys
-        );
+        foreach ($data as $datum) {
+            $diffKeys[] = array_filter($datum, function($key) use ($keys) {
+                return !in_array($key, $keys);
+            }, ARRAY_FILTER_USE_KEY);
+        }
+
+        foreach ($diffKeys as $key)
+        {
+            foreach ($key as $separateKey => $value)
+            {
+                for ($i = 0; $i < count($data); $i++)
+                {
+                    unset($data[$i][$separateKey]);
+                }
+            }
+        }
+
+        return $data;
     }
 
     private function getId(array $data, int|string $key = null): string
