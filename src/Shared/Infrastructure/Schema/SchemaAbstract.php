@@ -2,12 +2,15 @@
 
 namespace App\Shared\Infrastructure\Schema;
 
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
+
 abstract class SchemaAbstract implements SchemaInterface
 {
     private array $fields;
 
     public function __construct(
-        private readonly array $data
+        private array $data
     )
     {
         $this->setFields(
@@ -21,10 +24,17 @@ abstract class SchemaAbstract implements SchemaInterface
 
     public function getAttributes(): array
     {
-        $attributes = [];
-        $diffData = $this->diffData();
+        if ($this->identifyNesting() < 1) {
+            $this->setData([$this->getData()]);
+        }
+        return $this->initialAttributes();
+    }
 
-        foreach ($diffData as $key => $data) {
+    private function initialAttributes(): array
+    {
+        $attributes = [];
+
+        foreach ($this->diffData() as $key => $data) {
             foreach ($this->getFields() as $field)
             {
                 $attributes[$key]['id'] = $this->getId($data);
@@ -46,6 +56,22 @@ abstract class SchemaAbstract implements SchemaInterface
                 $this->getKeys()
             )
         );
+    }
+
+    private function identifyNesting(): int
+    {
+        $depth = 0;
+
+        $it = new RecursiveIteratorIterator(new RecursiveArrayIterator(
+            $this->getData()
+        ));
+
+        foreach ($it as $tmp) {
+            $int = $it->getDepth();
+            $depth >= $int ?: $depth = $int;
+        }
+
+        return $depth;
     }
 
     private function getKeys(): array
@@ -79,13 +105,10 @@ abstract class SchemaAbstract implements SchemaInterface
     {
         $data = $this->getData();
 
-        foreach ($diffKeys as $key)
-        {
-            foreach ($key as $separateKey => $value)
-            {
-                for ($i = 0; $i < count($data); $i++)
-                {
-                    unset($data[$i][$separateKey]);
+        foreach ($diffKeys as $key) {
+            foreach ($key as $separateKey => $value) {
+                foreach ($data as &$datum) {
+                    unset($datum[$separateKey]);
                 }
             }
         }
@@ -94,40 +117,27 @@ abstract class SchemaAbstract implements SchemaInterface
 
     private function getId(array $data, int|string $key = null): string
     {
-        if (isset($key))
-        {
-            return (string) $data[$key]['id'];
-        }
-        return (string) $data['id'] ??
-            throw new \InvalidArgumentException("{$key} not found in data");
-    }
-
-    private function makeAttributeStructure(array $data): array
-    {
-        $attributes = [];
-
-        foreach ($data as $value)
-        {
-            $attributes[] = $this->getBaseStructure($value);
-        }
-
-        return $attributes;
+        return (string) ($key !== null ? $data[$key]['id'] : $data['id'])
+            ?? throw new \InvalidArgumentException("{$key} not found in data");
     }
 
     private function getBaseStructure(array $data): array
     {
-        $structure = [
+        $id = $data['id'];
+        unset($data['id']);
+
+        return [
             'type' => $this->type(),
-            'id' => $data['id'],
+            'id' => $id,
+            'attributes' => $data,
         ];
-
-        $attributes = $data;
-        unset($attributes['id']);
-
-        $structure['attributes'] = $attributes;
-
-        return $structure;
     }
+
+    private function makeAttributeStructure(array $data): array
+    {
+        return array_map(fn($value) => $this->getBaseStructure($value), $data);
+    }
+
 
     private function setFields(array $fields): void
     {
@@ -137,5 +147,10 @@ abstract class SchemaAbstract implements SchemaInterface
     private function getData(): array
     {
         return $this->data;
+    }
+
+    private function setData(array $data): void
+    {
+        $this->data = $data;
     }
 }
