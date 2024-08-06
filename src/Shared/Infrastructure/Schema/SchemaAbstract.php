@@ -2,6 +2,7 @@
 
 namespace App\Shared\Infrastructure\Schema;
 
+use InvalidArgumentException;
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
 
@@ -118,7 +119,7 @@ abstract class SchemaAbstract implements SchemaInterface
     private function getId(array $data, int|string $key = null): string
     {
         return (string) ($key !== null ? $data[$key]['id'] : $data['id'])
-            ?? throw new \InvalidArgumentException("{$key} not found in data");
+            ?? throw new InvalidArgumentException("{$key} not found in data");
     }
 
     private function getBaseStructure(array $data): array
