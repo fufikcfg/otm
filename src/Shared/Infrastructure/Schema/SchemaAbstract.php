@@ -66,7 +66,7 @@ abstract class SchemaAbstract implements SchemaInterface
             $this->getData()
         ));
 
-        foreach ($it as $tmp) {
+        foreach ($it as $ignored) {
             $int = $it->getDepth();
             $depth >= $int ?: $depth = $int;
         }
