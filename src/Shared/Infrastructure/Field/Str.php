@@ -8,4 +8,9 @@ class Str extends AttributeAbstract
     {
         return new self($key, $name);
     }
+
+    public function handle(mixed $value): string
+    {
+        return (string) $value;
+    }
 }

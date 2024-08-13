@@ -39,7 +39,7 @@ abstract class SchemaAbstract implements SchemaInterface
             foreach ($this->getFields() as $field)
             {
                 $attributes[$key]['id'] = $this->getId($data);
-                $attributes[$key][$field->getName()] = $data[$field->getKey()];
+                $attributes[$key][$field->getName()] = $field->setValue($data[$field->getKey()])->getValue();
             }
         }
         return $this->makeAttributeStructure($attributes);
@@ -136,9 +136,11 @@ abstract class SchemaAbstract implements SchemaInterface
 
     private function makeAttributeStructure(array $data): array
     {
-        return array_map(fn($value) => $this->getBaseStructure($value), $data);
+        return array_map(fn ($value) =>
+            $this->getBaseStructure($value),
+                $data
+        );
     }
-
 
     private function setFields(array $fields): void
     {
