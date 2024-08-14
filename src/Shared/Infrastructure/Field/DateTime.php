@@ -11,9 +11,7 @@ class DateTime extends AttributeAbstract
 
     public function handle(mixed $value): string
     {
-        if ($value instanceof \DateTime) {
-            return $value->format('m.d.Y i:H');
-        }
-        return $value;
+        return $value instanceof \DateTime
+            ? $value->format('m.d.Y i:H') : $value;
     }
 }
