@@ -3,7 +3,7 @@
 namespace App\Users\Application\UseCase\Query\CreateUser;
 
 use App\Shared\Application\Query\QueryInterface;
-use App\Users\Domain\Entity\User;
+use App\Users\Application\DTO\UserDTO;
 use App\Users\Domain\Factory\UserFactory;
 use App\Users\Infrastructure\Repository\UserRepository;
 
@@ -15,7 +15,7 @@ readonly class CreateUserHandler implements QueryInterface
     ) {
     }
 
-    public function handle(CreateUserQuery $query): User
+    public function handle(CreateUserQuery $query): array
     {
         $user = $this->userFactory->create(
             $query->middleName,
@@ -28,6 +28,15 @@ readonly class CreateUserHandler implements QueryInterface
 
         $this->userRepository->create($user);
 
-        return $user;
+        return (new UserDTO(
+            $user->getId(),
+            $user->getMiddleName(),
+            $user->getGivenName(),
+            $user->getFamilyName(),
+            $user->getUsername(),
+            $user->getEmail(),
+            $user->getCreatedAt(),
+            $user->getUpdatedAt(),
+        ))->toArray();
     }
 }

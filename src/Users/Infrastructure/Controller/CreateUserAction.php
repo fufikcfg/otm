@@ -4,8 +4,8 @@ namespace App\Users\Infrastructure\Controller;
 
 use App\Users\Application\UseCase\Query\CreateUser\CreateUserHandler;
 use App\Users\Application\UseCase\Query\CreateUser\CreateUserQuery;
-use App\Users\Infrastructure\Responder\UserResponder;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Users\Infrastructure\Responder\V1\UserResponder;
+use App\Users\Infrastructure\Schema\UserSchema;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\Routing\Attribute\Route;
@@ -32,15 +32,6 @@ class CreateUserAction
         );
         $userDTO = $this->createUserHandler->handle($query);
 
-        return new UserResponder($userDTO->getId(), [
-            'id' => $userDTO->getId(),
-            'middleName' => $userDTO->getMiddleName(),
-            'familyName' => $userDTO->getFamilyName(),
-            'givenName' => $userDTO->getGivenName(),
-            'username' => $userDTO->getUsername(),
-            'email' => $userDTO->getEmail(),
-            'createdAt' => $userDTO->getCreatedAt(),
-            'updatedAt' => $userDTO->getUpdatedAt(),
-        ]);
+        return new UserResponder($userDTO, UserSchema::class);
     }
 }
