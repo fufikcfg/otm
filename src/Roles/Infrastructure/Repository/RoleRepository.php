@@ -5,11 +5,12 @@ namespace App\Roles\Infrastructure\Repository;
 use App\Roles\Domain\Entity\Role;
 use App\Roles\Domain\Repository\RoleRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 
 class RoleRepository extends ServiceEntityRepository implements RoleRepositoryInterface
 {
-    readonly object $_em;
+    readonly EntityManagerInterface $_em;
 
     public function __construct(ManagerRegistry $registry)
     {
