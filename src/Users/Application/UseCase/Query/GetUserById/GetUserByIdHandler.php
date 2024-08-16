@@ -4,7 +4,6 @@ namespace App\Users\Application\UseCase\Query\GetUserById;
 
 use App\Shared\Application\Query\QueryInterface;
 use App\Users\Application\DTO\UserDTO;
-use App\Users\Application\DTO\UserDTOTransformer;
 use App\Users\Infrastructure\Repository\UserRepository;
 
 readonly class GetUserByIdHandler implements QueryInterface
