@@ -2,7 +2,9 @@
 
 namespace App\Shared\Infrastructure\Field;
 
-class DateTime extends AttributeAbstract
+use App\Shared\Infrastructure\Attribute\FieldAttributeAbstract;
+
+class DateTime extends FieldAttributeAbstract
 {
     public static function make(mixed $key, ?string $name = null): self
     {

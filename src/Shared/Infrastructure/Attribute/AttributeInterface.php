@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Infrastructure\Field;
+namespace App\Shared\Infrastructure\Attribute;
 
 interface AttributeInterface
 {

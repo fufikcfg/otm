@@ -22,12 +22,4 @@ class UserRoleRepository extends ServiceEntityRepository implements UserRoleRepo
     {
         return $this->findOneBy(['user' => $id]);
     }
-
-//    public function create(User $user): ?UserRole
-//    {
-//        $this->_em->persist($user);
-//        $this->_em->flush();
-//
-//        return $user;
-//    }
 }

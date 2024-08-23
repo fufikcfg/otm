@@ -2,7 +2,7 @@
 
 namespace App\Shared\Infrastructure\Responder;
 
-use App\Shared\Infrastructure\Schema\SchemaAbstract;
+use App\Shared\Infrastructure\Schema\SchemaInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 abstract class ResponderAbstract extends JsonResponse implements ResponderInterface
@@ -21,7 +21,7 @@ abstract class ResponderAbstract extends JsonResponse implements ResponderInterf
         );
     }
 
-    private function createSchemaInstance(SchemaAbstract $schemaInstance): array
+    private function createSchemaInstance(SchemaInterface $schemaInstance): array
     {
         return [
             $schemaInstance->getAttributes()

@@ -3,8 +3,6 @@
 namespace App\Shared\Infrastructure\Schema;
 
 use InvalidArgumentException;
-use RecursiveArrayIterator;
-use RecursiveIteratorIterator;
 
 abstract class SchemaAbstract implements SchemaInterface
 {
@@ -25,7 +23,7 @@ abstract class SchemaAbstract implements SchemaInterface
 
     public function getAttributes(): array
     {
-        if ($this->identifyNesting() < 1) {
+        if ($this->identifyNesting() > 0) {
             $this->setData([$this->getData()]);
         }
         return $this->initialAttributes();
@@ -36,8 +34,7 @@ abstract class SchemaAbstract implements SchemaInterface
         $attributes = [];
 
         foreach ($this->diffData() as $key => $data) {
-            foreach ($this->getFields() as $field)
-            {
+            foreach ($this->getFields() as $field) {
                 $attributes[$key]['id'] = $this->getId($data);
                 $attributes[$key][$field->getName()] = $field->setValue($data[$field->getKey()])->getValue();
             }
@@ -63,24 +60,17 @@ abstract class SchemaAbstract implements SchemaInterface
     {
         $depth = 0;
 
-        $it = new RecursiveIteratorIterator(new RecursiveArrayIterator(
-            $this->getData()
-        ));
-
-        foreach ($it as $ignored) {
-            $int = $it->getDepth();
-            $depth >= $int ?: $depth = $int;
-        }
+        is_array(current($this->getData())) ?: $depth++;
 
         return $depth;
     }
+
 
     private function getKeys(): array
     {
         $keys = ['id'];
 
-        foreach ($this->getFields() as $field)
-        {
+        foreach ($this->getFields() as $field) {
             $keys[] = $field->getKey();
         }
 

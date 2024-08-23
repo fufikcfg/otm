@@ -4,7 +4,7 @@ namespace App\Shared\Infrastructure\Field;
 
 use App\Shared\Infrastructure\Attribute\FieldAttributeAbstract;
 
-class Str extends FieldAttributeAbstract
+class ID extends FieldAttributeAbstract
 {
     public static function make(mixed $key, ?string $name = null): self
     {

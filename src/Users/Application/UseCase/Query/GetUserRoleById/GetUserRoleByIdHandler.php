@@ -18,9 +18,9 @@ readonly class GetUserRoleByIdHandler implements QueryInterface
     public function handle(GetUserRoleByIdQuery $query): array
     {
         $user = $this->userRoleRepository->findByUserId($query->getUserId())
-            ?? throw new \Exception('User not found');
+            ?? throw new \LogicException('User not found');
 
-        dd( (new UserRoleDTO(
+        return (new UserRoleDTO(
             $user->getId(),
             (new UserDTO(
                 $user->getUser()->getId(),
@@ -39,6 +39,6 @@ readonly class GetUserRoleByIdHandler implements QueryInterface
             )),
             $user->getCreatedAt(),
             $user->getUpdatedAt(),
-        ))->toArray());
+        ))->toArray();
     }
 }

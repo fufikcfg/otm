@@ -14,13 +14,10 @@ readonly class GetUserByIdHandler implements QueryInterface
     ) {
     }
 
-    /**
-     * @throws \Exception
-     */
     public function handle(GetUserByIdQuery $query): array
     {
         $user = $this->userRepository->findById($query->getUserId())
-            ?? throw new \Exception('User not found');
+            ?? throw new \LogicException('User not found');
 
         return (new UserDTO(
             $user->getId(),
