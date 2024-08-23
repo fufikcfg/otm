@@ -2,7 +2,9 @@
 
 namespace App\Roles\Application\UseCase\DTO;
 
-readonly class RoleDTO
+use App\Shared\Application\DTO\ArrayableInterface;
+
+readonly class RoleDTO implements ArrayableInterface
 {
     public function __construct(
         private int $id,
@@ -24,5 +26,14 @@ readonly class RoleDTO
     public function getKey(): string
     {
         return $this->key;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'key' => $this->getKey(),
+        ];
     }
 }
