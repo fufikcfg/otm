@@ -9,11 +9,11 @@
             <generator strategy="AUTO"/>
         </id>
 
-        <many-to-one field="user" target-entity="App\Users\Domain\Entity\User" fetch="EAGER">
+        <many-to-one field="user" target-entity="App\Users\Domain\Entity\User">
             <join-column name="user_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
         </many-to-one>
 
-        <many-to-one field="role" target-entity="App\Roles\Domain\Entity\Role" fetch="EAGER">
+        <many-to-one field="role" target-entity="App\Roles\Domain\Entity\Role">
             <join-column name="role_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
         </many-to-one>
 
