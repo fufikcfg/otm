@@ -1,4 +1,4 @@
-version: '4'
+version: '3'
 
 services:
   php-fpm:
@@ -18,7 +18,7 @@ services:
     ports:
       - ${NGINX_HOST_HTTP_PORT}:80
     volumes:
-      - ..:/var/www:rw
+      - .:/var/www:rw
     depends_on:
       - php-fpm
 
