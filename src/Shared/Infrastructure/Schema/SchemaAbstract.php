@@ -29,17 +29,33 @@ abstract class SchemaAbstract implements SchemaInterface
         return $this->initialAttributes();
     }
 
+    // TODO Сделать метод меньше
     private function initialAttributes(): array
     {
         $attributes = [];
+        $relations = [];
+//        dd($this->diffData(), $this->getFields());
 
         foreach ($this->diffData() as $key => $data) {
             foreach ($this->getFields() as $field) {
-                $attributes[$key]['id'] = $this->getId($data);
-                $attributes[$key][$field->getName()] = $field->setValue($data[$field->getKey()])->getValue();
+                $attributes[$key]['id'] = $pk = $this->getId($data);
+                if ($field->isRelation())
+                {
+                    $relations[$key][$field->getName()] = $field->setValue(
+                        $data[$field->getKey()]
+                    )->getValue();
+                    // TODO Нужен ли PrimaryKey
+                    $field->setPrimaryKey($pk);
+                } else {
+                    $attributes[$key][$field->getName()] = $field->setValue(
+                        $data[$field->getKey()]
+                    )->getValue();
+                }
             }
         }
-        return $this->makeAttributeStructure($attributes);
+        // TODO Схема не удаляет лишние аттрибуты в relations
+//        dd($attributes, $relations);
+        return $this->makeAttributeStructure($attributes, $relations);
     }
 
     public function getFields(): array
@@ -68,10 +84,15 @@ abstract class SchemaAbstract implements SchemaInterface
 
     private function getKeys(): array
     {
-        $keys = ['id'];
+        $keys = ['id', 'relations' => []];
 
         foreach ($this->getFields() as $field) {
-            $keys[] = $field->getKey();
+            if ($field->isRelation())
+            {
+                $keys['relations'][] = $field->getKey();
+            } else {
+                $keys[] = $field->getKey();
+            }
         }
 
         return $keys;
@@ -85,7 +106,7 @@ abstract class SchemaAbstract implements SchemaInterface
 
         foreach ($data as $datum) {
             $diffKeys[] = array_filter($datum, function($key) use ($keys) {
-                return !in_array($key, $keys);
+                return !in_array($key, $keys) && in_array('relations', $keys);
             }, ARRAY_FILTER_USE_KEY);
         }
 
@@ -124,12 +145,14 @@ abstract class SchemaAbstract implements SchemaInterface
         ];
     }
 
-    private function makeAttributeStructure(array $data): array
+    private function makeAttributeStructure(array $attributes, array $relations): array
     {
-        return array_map(fn ($value) =>
-            $this->getBaseStructure($value),
-                $data
-        );
+        return array_map(fn ($value) => $this->getBaseStructure($value), $attributes);
+    }
+
+    private function makeRelationStructure(array $relations)
+    {
+
     }
 
     private function setFields(array $fields): void
