@@ -20,9 +20,9 @@ class Relation extends FieldAttributeAbstract
         $this->setType();
     }
 
-    public static function make(mixed $key, ?string $name = null): self
+    public static function make(mixed $key, ?string $name = null): never
     {
-        return throw new \InvalidArgumentException("The MAKE method does not support {${static::class}}.");
+        exit();
     }
 
     public static function makeWith(mixed $key, string $relationSchema, mixed $name = null): self
