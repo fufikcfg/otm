@@ -4,7 +4,7 @@ namespace App\Shared\Infrastructure\Field;
 
 use App\Shared\Infrastructure\Attribute\FieldAttributeAbstract;
 
-class ID extends FieldAttributeAbstract
+class HashID extends FieldAttributeAbstract
 {
     public static function make(mixed $key, ?string $name = null): self
     {
@@ -13,6 +13,6 @@ class ID extends FieldAttributeAbstract
 
     public function handle(mixed $value): string
     {
-        return (string) $value;
+        return md5($value);
     }
 }

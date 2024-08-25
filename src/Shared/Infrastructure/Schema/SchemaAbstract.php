@@ -54,6 +54,7 @@ abstract class SchemaAbstract implements SchemaInterface
             }
         }
         // TODO Схема не удаляет лишние аттрибуты в relations
+        // TODO Добавить проверку на Warning: Undefined array key "key" relations|attributes[$key][$field->getName()] = $field->setValue($data[$field->getKey()]
 //        dd($attributes, $relations);
         return $this->makeAttributeStructure($attributes, $relations);
     }
