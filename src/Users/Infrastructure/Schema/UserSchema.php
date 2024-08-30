@@ -14,7 +14,7 @@ class UserSchema extends SchemaAbstract
         return 'users';
     }
 
-    public function fields(array $data): array
+    public function fields(): array
     {
         return [
             Str::make('middleName'),

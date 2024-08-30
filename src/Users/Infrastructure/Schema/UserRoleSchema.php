@@ -14,11 +14,11 @@ class UserRoleSchema extends SchemaAbstract
         return 'user_roles';
     }
 
-    public function fields(array $data): array
+    public function fields(): array
     {
         return [
-            Relation::makeWith('role', RoleSchema::class),
-            Relation::makeWith('user', UserSchema::class),
+            Relation::make('role')->schema(RoleSchema::class),
+            Relation::make('user')->schema(UserSchema::class),
             DateTime::make('createdAt'),
             DateTime::make('updatedAt'),
         ];
