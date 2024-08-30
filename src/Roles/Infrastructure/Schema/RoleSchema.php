@@ -12,10 +12,10 @@ class RoleSchema extends SchemaAbstract
         return 'roles';
     }
 
-    public function fields(array $data): array
+    public function fields(): array
     {
         return [
-            Str::make('name', 'name'),
+            Str::make('name'),
         ];
     }
 }

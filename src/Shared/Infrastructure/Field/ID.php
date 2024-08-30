@@ -4,11 +4,10 @@ namespace App\Shared\Infrastructure\Field;
 
 use App\Shared\Infrastructure\Attribute\AttributeAbstract;
 
-class DateTime extends AttributeAbstract
+class ID extends AttributeAbstract
 {
     public function handle(mixed $value): string
     {
-        return $value instanceof \DateTime
-            ? $value->format('m.d.Y i:H') : $value;
+        return (string) $value;
     }
 }

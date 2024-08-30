@@ -4,7 +4,7 @@ namespace App\Shared\Infrastructure\Field;
 
 use App\Shared\Infrastructure\Attribute\AttributeAbstract;
 
-class DateTime extends AttributeAbstract
+class Timestamp extends AttributeAbstract
 {
     public function handle(mixed $value): string
     {
