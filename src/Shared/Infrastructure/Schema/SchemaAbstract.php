@@ -11,55 +11,64 @@ abstract class SchemaAbstract implements SchemaInterface
 
     public function __construct()
     {
-        $this->initializeFields();
+        $this->handle();
     }
 
     abstract public function type(): string;
 
     abstract public function fields(): array;
 
-    private function initializeFields(): void
+    public function getFields(): array
     {
-        $this->fields = array_merge([ID::make('id')], $this->fields());
+        return $this->fields;
+    }
+
+    private function handle(): void
+    {
+        $this->setFields(
+            $this->fields()
+        );
         $this->removeUnnecessaryItems();
+        $this->checkUsedID();
     }
 
     private function initializeID(): void
     {
-        $this->fields = array_merge([ID::make('id')], $this->fields);
+        $this->setFields(array_merge([
+            ID::make('id')
+        ], $this->fields()));
     }
 
     private function removeUnnecessaryItems(): void
     {
-        $fields = $this->fields();
-
+        $fields = $this->getFields();
         foreach ($fields as $key => $field) {
             if (!$field instanceof AttributeInterface)
             {
                 unset($fields[$key]);
             }
         }
-
-        $this->checkUsedID();
+        $this->setFields($fields);
     }
 
     private function checkUsedID(): void
     {
-        $switcher = false;
-        foreach ($this->fields() as $field) {
+        $switcherIdExist = false;
+
+        foreach ($this->getFields() as $field) {
             if (is_a($field, ID::class))
             {
-                $switcher = true;
+                $switcherIdExist = true;
             }
         }
-        if ($switcher)
+        if (!$switcherIdExist)
         {
             $this->initializeID();
         }
     }
 
-    public function getFields(): array
+    private function setFields(array $fields): void
     {
-        return $this->fields;
+        $this->fields = $fields;
     }
 }
