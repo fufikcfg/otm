@@ -2,17 +2,19 @@
 
 namespace App\Shared\Infrastructure\Collection;
 
+use App\Shared\Infrastructure\Attribute\AttributeInterface;
 use App\Shared\Infrastructure\Field\Relation;
 use App\Shared\Infrastructure\Schema\SchemaInterface;
 use App\Shared\Infrastructure\Service\FieldInstanceofChecker\FieldInstanceofChecker;
 use App\Shared\Infrastructure\Service\FieldSerializer\Serializer\Serializer;
 
+//TODO Добавить типы аргументов
 class CollectionFormatter
 {
-    private array $formatFields;
+    private array $formattedFields;
 
     public function __construct(
-        private array           $data,
+        private array $data,
         private readonly SchemaInterface $schema
     ) {
     }
@@ -20,54 +22,64 @@ class CollectionFormatter
     public function handle(): array
     {
         $this->addNesting();
-        $this->formatFields();
+        $this->format();
+        return $this->formattedFields;
+    }
 
-        return [];
+    private function format(): void
+    {
+        foreach ($this->data as $datumKey => $datum) {
+            foreach ($datum as $key => $value) {
+                $this->processFields($datumKey, $key, $value);
+            }
+        }
+    }
+
+    private function processFields($datumKey, $key, $value): void
+    {
+        foreach ($this->schema->getFields() as $field) {
+            if ($this->keyMatches($key, $field->getKey())) {
+                FieldInstanceofChecker::execute($field, Relation::class)
+                    ? $this->handleRelation($field, $value, $datumKey, $key)
+                    : $this->serializeAndStore($field, $value, $datumKey, $key);
+            }
+        }
+    }
+
+    private function handleRelation($field, $value, $datumKey, $key): void
+    {
+        foreach ($field->getRelationFields()->fields() as $relationField) {
+            $relationKey = $relationField->getKey();
+            if (isset($value[$relationKey])) {
+                $this->serializeAndStore($field, $value[$relationKey], $datumKey, $key, $relationKey);
+            }
+        }
+    }
+
+    private function keyMatches($dataKey, $fieldKey): bool
+    {
+        return $dataKey === $fieldKey;
+    }
+
+    private function serializeAndStore(AttributeInterface $field, $value, string $primaryKey, string $foreignKey, ?string $relationKey = null): void
+    {
+        $serializer = Serializer::make($field, $field->getKey(), $value)->serialize();
+        if ($relationKey !== null) {
+            $this->formattedFields[$primaryKey][$foreignKey][$relationKey] = $serializer;
+        } else {
+            $this->formattedFields[$primaryKey][$foreignKey] = $serializer;
+        }
     }
 
     private function addNesting(): void
     {
-        if ($this->identifyNesting() > 0) {
+        if ($this->needsNesting()) {
             $this->data = [$this->data];
         }
     }
 
-    private function identifyNesting(): int
+    private function needsNesting(): bool
     {
-        $depth = 0;
-
-        is_array(current($this->data)) ?: $depth++;
-
-        return $depth;
-    }
-
-    private function formatFields(): void
-    {
-        foreach ($this->data as $datumKey => $datum) {
-            foreach ($datum as $key => $data) {
-                foreach ($this->schema->getFields() as $field) {
-                    if ($key == $field->getKey())
-                    {
-                        if (FieldInstanceofChecker::execute($field, Relation::class))
-                        {
-                            foreach ($field->getRelationFields()->fields() as $relationField)
-                            {
-                                foreach ($data as $relationDataKey => $relationData)
-                                {
-                                    if ($relationDataKey == $relationField->getKey())
-                                    {
-                                        $this->formatFields[$datumKey][$key][$relationDataKey] =
-                                            Serializer::make($field, $field->getKey(), $relationData)->serialize();
-                                    }
-                                }
-                            }
-                        } else {
-                            $this->formatFields[$datumKey][$key] =
-                                Serializer::make($field, $field->getKey(), $data)->serialize();
-                        }
-                    }
-                }
-            }
-        }
+        return !is_array(current($this->data));
     }
 }
