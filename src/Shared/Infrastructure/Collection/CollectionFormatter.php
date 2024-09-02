@@ -2,7 +2,10 @@
 
 namespace App\Shared\Infrastructure\Collection;
 
+use App\Shared\Infrastructure\Field\Relation;
 use App\Shared\Infrastructure\Schema\SchemaInterface;
+use App\Shared\Infrastructure\Service\FieldInstanceofChecker\FieldInstanceofChecker;
+use App\Shared\Infrastructure\Service\FieldSerializer\Serializer\Serializer;
 
 class CollectionFormatter
 {
@@ -10,7 +13,7 @@ class CollectionFormatter
 
     public function __construct(
         private array           $data,
-        private SchemaInterface $schema
+        private readonly SchemaInterface $schema
     ) {
     }
 
@@ -38,42 +41,33 @@ class CollectionFormatter
         return $depth;
     }
 
-    // TODO Need refactoring
     private function formatFields(): void
     {
         foreach ($this->data as $datumKey => $datum) {
             foreach ($datum as $key => $data) {
                 foreach ($this->schema->getFields() as $field) {
-                    if ($key == 'id')
-                    {
-                        $this->formatFields[$datumKey][$key] = $data;
-                    }
                     if ($key == $field->getKey())
                     {
-                        if ($field->isRelation())
+                        if (FieldInstanceofChecker::execute($field, Relation::class))
                         {
                             foreach ($field->getRelationFields()->fields() as $relationField)
                             {
                                 foreach ($data as $relationDataKey => $relationData)
                                 {
-                                    if ($relationDataKey == 'id')
-                                    {
-                                        $this->formatFields[$datumKey][$key][$relationDataKey] = $relationData;
-                                    }
-
                                     if ($relationDataKey == $relationField->getKey())
                                     {
-                                        $this->formatFields[$datumKey][$key][$relationDataKey] = (clone $relationField)->setValue($relationData);
+                                        $this->formatFields[$datumKey][$key][$relationDataKey] =
+                                            Serializer::make($field, $field->getKey(), $relationData)->serialize();
                                     }
                                 }
                             }
                         } else {
-                            $this->formatFields[$datumKey][$key] = (clone $field)->setValue($data);
+                            $this->formatFields[$datumKey][$key] =
+                                Serializer::make($field, $field->getKey(), $data)->serialize();
                         }
                     }
                 }
             }
         }
-        dd($this->formatFields);
     }
 }
