@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Infrastructure\Collection;
+namespace App\Shared\Infrastructure\Formatter\Collection;
 
 use App\Shared\Infrastructure\Attribute\AttributeInterface;
 use App\Shared\Infrastructure\Field\Relation;
@@ -9,7 +9,7 @@ use App\Shared\Infrastructure\Service\FieldInstanceofChecker\FieldInstanceofChec
 use App\Shared\Infrastructure\Service\FieldSerializer\Serializer\Serializer;
 
 //TODO Добавить типы аргументов
-class CollectionFormatter
+class CollectionFormatter implements CollectionFormatterInterface
 {
     private array $formattedFields;
 
@@ -46,12 +46,13 @@ class CollectionFormatter
         }
     }
 
+    // TODO Если будет много отношений, то обновлять здесь
     private function handleRelation($field, $value, $datumKey, $key): void
     {
-        foreach ($field->getRelationFields()->fields() as $relationField) {
+        foreach ($field->getRelationFields()->getFields() as $relationField) {
             $relationKey = $relationField->getKey();
             if (isset($value[$relationKey])) {
-                $this->serializeAndStore($field, $value[$relationKey], $datumKey, $key, $relationKey);
+                $this->serializeAndStore($relationField, $value[$relationKey], $datumKey, $key, $relationKey);
             }
         }
     }
@@ -63,12 +64,7 @@ class CollectionFormatter
 
     private function serializeAndStore(AttributeInterface $field, $value, string $primaryKey, string $foreignKey, ?string $relationKey = null): void
     {
-        $serializer = Serializer::make($field, $field->getKey(), $value)->serialize();
-        if ($relationKey !== null) {
-            $this->formattedFields[$primaryKey][$foreignKey][$relationKey] = $serializer;
-        } else {
-            $this->formattedFields[$primaryKey][$foreignKey] = $serializer;
-        }
+        $this->formattedFields[$primaryKey][$foreignKey][($relationKey ?? null)] = Serializer::make($field, $field->getKey(), $value);
     }
 
     private function addNesting(): void
