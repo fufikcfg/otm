@@ -64,7 +64,12 @@ class CollectionFormatter implements CollectionFormatterInterface
 
     private function serializeAndStore(AttributeInterface $field, $value, string $primaryKey, string $foreignKey, ?string $relationKey = null): void
     {
-        $this->formattedFields[$primaryKey][$foreignKey][($relationKey ?? null)] = Serializer::make($field, $field->getKey(), $value);
+        $serializer = Serializer::make($field, $field->getKey(), $value);
+        if ($relationKey !== null) {
+            $this->formattedFields[$primaryKey][$foreignKey][$relationKey] = $serializer;
+        } else {
+            $this->formattedFields[$primaryKey][$foreignKey] = $serializer;
+        }
     }
 
     private function addNesting(): void
