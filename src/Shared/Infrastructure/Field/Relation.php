@@ -16,7 +16,7 @@ class Relation extends AttributeAbstract
         return $this;
     }
 
-    public function handle(mixed $value): mixed
+    public static function handle(mixed $value): mixed
     {
         return $value;
     }

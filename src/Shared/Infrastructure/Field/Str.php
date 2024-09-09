@@ -6,7 +6,7 @@ use App\Shared\Infrastructure\Attribute\AttributeAbstract;
 
 class Str extends AttributeAbstract
 {
-    public function handle(mixed $value): string
+    public static function handle(mixed $value): string
     {
         return (string) $value;
     }

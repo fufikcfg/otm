@@ -6,7 +6,7 @@ use App\Shared\Infrastructure\Attribute\AttributeAbstract;
 
 class Boolean extends AttributeAbstract
 {
-    public function handle(mixed $value): string
+    public static function handle(mixed $value): string
     {
         if (is_bool($value)) {
             return $value ? 'true' : 'false';
