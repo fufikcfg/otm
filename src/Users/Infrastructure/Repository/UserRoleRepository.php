@@ -2,6 +2,8 @@
 
 namespace App\Users\Infrastructure\Repository;
 
+use App\Roles\Domain\Entity\Role;
+use App\Users\Domain\Entity\User;
 use App\Users\Domain\Entity\UserRole;
 use App\Users\Domain\Repository\UserRoleRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -21,5 +23,13 @@ class UserRoleRepository extends ServiceEntityRepository implements UserRoleRepo
     public function findByUserId(int $id): ?UserRole
     {
         return $this->findOneBy(['user' => $id]);
+    }
+
+    public function initialDefaultRole(UserRole $userRole): UserRole
+    {
+        $this->_em->persist($userRole);
+        $this->_em->flush();
+
+        return $userRole;
     }
 }
