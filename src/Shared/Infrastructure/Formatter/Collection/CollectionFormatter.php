@@ -23,6 +23,7 @@ class CollectionFormatter implements CollectionFormatterInterface
     {
         $this->addNesting();
         $this->format();
+        $this->typeDefine();
         return $this->formattedFields;
     }
 
@@ -31,6 +32,30 @@ class CollectionFormatter implements CollectionFormatterInterface
         foreach ($this->data as $datumKey => $datum) {
             foreach ($datum as $key => $value) {
                 $this->processFields($datumKey, $key, $value);
+            }
+        }
+    }
+
+    private function typeDefine(): void
+    {
+        $this->formattedFields['type'] = $this->schema->type();
+        $this->relationTypeDefine();
+    }
+
+    private function relationTypeDefine(): void
+    {
+        foreach ($this->formattedFields as $keyField => $field)
+        {
+            if (isset($field['relations']))
+            {
+                foreach ($this->schema->fields() as $schemaField)
+                {
+                    if (FieldInstanceofChecker::execute($schemaField, Relation::class))
+                    {
+                        $this->formattedFields[$keyField]['relations'][$schemaField->getKey()]['type'] =
+                            $schemaField->getRelationFields()->type();
+                    }
+                }
             }
         }
     }
@@ -66,7 +91,7 @@ class CollectionFormatter implements CollectionFormatterInterface
     {
         $serializer = Serializer::make($field, $field->getKey(), $value);
         if ($relationKey !== null) {
-            $this->formattedFields[$primaryKey][$foreignKey][$relationKey] = $serializer;
+            $this->formattedFields[$primaryKey]['relations'][$foreignKey][$relationKey] = $serializer;
         } else {
             $this->formattedFields[$primaryKey][$foreignKey] = $serializer;
         }

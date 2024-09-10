@@ -2,7 +2,8 @@
 
 namespace App\Shared\Infrastructure\Responder;
 
-use App\Shared\Infrastructure\Schema\SchemaInterface;
+use App\Shared\Infrastructure\Formatter\Collection\CollectionFormatter;
+use App\Shared\Infrastructure\Formatter\Response\ResponseFormatter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 abstract class ResponderAbstract extends JsonResponse implements ResponderInterface
@@ -13,28 +14,24 @@ abstract class ResponderAbstract extends JsonResponse implements ResponderInterf
     ) {
         parent::__construct();
         $this->setData(
-            $this->formatData(
-                $this->createSchemaInstance(
-                    new $this->schemaClass($this->attributes)
-                )
-            )
+            $this->formatData()
         );
     }
 
-    private function createSchemaInstance(SchemaInterface $schemaInstance): array
-    {
-        return [
-            $schemaInstance->getAttributes()
-        ];
-    }
-
-    private function formatData(array $data): array
+    private function formatData(): array
     {
         return [
             'jsonapi' => [
                 'version' => $this->version(),
             ],
-            'data' => $data
+            'data' => $this->response()
         ];
+    }
+
+    private function response(): array
+    {
+        return (new ResponseFormatter)->format(
+            new CollectionFormatter($this->attributes, new $this->schemaClass())
+        );
     }
 }

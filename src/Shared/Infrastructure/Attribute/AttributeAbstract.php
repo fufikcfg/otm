@@ -4,17 +4,20 @@ namespace App\Shared\Infrastructure\Attribute;
 
 abstract class AttributeAbstract implements AttributeInterface
 {
-    abstract public static function make(mixed $key, ?string $name = null): self;
-    abstract public function handle(mixed $value): mixed;
+    abstract public static function handle(mixed $value): mixed;
 
-    private readonly mixed $key;
-    private readonly ?string $name;
-    private mixed $value;
+    private readonly string $key;
+    private ?string $name;
 
-    public function __construct(mixed $key, mixed $name)
+    public function __construct(string $key, private readonly mixed $value)
     {
         $this->key = $key;
-        $this->name = $name ?? $this->key;
+        $this->name = $this->name ?? $this->key;
+    }
+
+    public static function make(mixed $key): static
+    {
+        return new static($key, null);
     }
 
     public function getKey(): string
@@ -22,20 +25,20 @@ abstract class AttributeAbstract implements AttributeInterface
         return $this->key;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getValue(): mixed
+    public function setName(string $name): self
     {
-        return $this->handle($this->value);
-    }
-
-    public function setValue(mixed $value): self
-    {
-        $this->value = $value;
+        $this->name = $name;
 
         return $this;
+    }
+
+    public function getValue(): mixed
+    {
+        return $this->value;
     }
 }
