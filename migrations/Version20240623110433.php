@@ -64,6 +64,8 @@ final class Version20240623110433 extends AbstractMigration
         id SERIAL PRIMARY KEY, 
         project_id INT NOT NULL, 
         user_id INT NOT NULL, 
+        created_at TIMESTAMP NOT NULL, 
+        updated_at TIMESTAMP NOT NULL, 
         FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE,
         FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
         )');
