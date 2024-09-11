@@ -2,8 +2,6 @@
 
 namespace App\Users\Infrastructure\Repository;
 
-use App\Roles\Domain\Entity\Role;
-use App\Users\Domain\Entity\User;
 use App\Users\Domain\Entity\UserRole;
 use App\Users\Domain\Repository\UserRoleRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
