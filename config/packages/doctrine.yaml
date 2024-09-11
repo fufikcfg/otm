@@ -28,6 +28,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Roles/Infrastructure/Doctrine'
                 prefix: 'App\Roles\Domain\Entity'
                 alias: Roles
+            Workflow:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/Workflow/Infrastructure/Doctrine'
+                prefix: 'App\Workflow\Domain\Entity'
+                alias: Workflow
 
 when@test:
     doctrine:

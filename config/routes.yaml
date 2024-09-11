@@ -9,4 +9,9 @@ controllers_roles:
         path: ../src/Roles/Infrastructure/Controller
         namespace: App\Roles\Infrastructure\Controller
     type: attribute
+controllers_projects:
+    resource:
+        path: ../src/Workflow/Infrastructure/Controller/Project
+        namespace: App\Workflow\Infrastructure\Controller\Project
+    type: attribute
 
