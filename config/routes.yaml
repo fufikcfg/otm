@@ -14,4 +14,9 @@ controllers_projects:
         path: ../src/Workflow/Infrastructure/Controller/Project
         namespace: App\Workflow\Infrastructure\Controller\Project
     type: attribute
+controllers_tasks:
+    resource:
+        path: ../src/Workflow/Infrastructure/Controller/Task/Task
+        namespace: App\Workflow\Infrastructure\Controller\Task\Task
+    type: attribute
 
