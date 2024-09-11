@@ -4,7 +4,7 @@ namespace App\Workflow\Domain\Entity;
 
 class TaskStatus
 {
-    private readonly int $id;
+    readonly int $id;
 
     public function __construct(
         private readonly string $name,

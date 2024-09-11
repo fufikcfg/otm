@@ -19,4 +19,13 @@ controllers_tasks:
         path: ../src/Workflow/Infrastructure/Controller/Task/Task
         namespace: App\Workflow\Infrastructure\Controller\Task\Task
     type: attribute
-
+controllers_task_statuses:
+    resource:
+        path: ../src/Workflow/Infrastructure/Controller/Task/TaskStatus
+        namespace: App\Workflow\Infrastructure\Controller\Task\TaskStatus
+    type: attribute
+controllers_task_priorities:
+    resource:
+        path: ../src/Workflow/Infrastructure/Controller/Task/TaskPriority
+        namespace: App\Workflow\Infrastructure\Controller\Task\TaskPriority
+    type: attribute
